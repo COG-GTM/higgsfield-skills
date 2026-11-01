@@ -50,7 +50,7 @@ More options in [INSTALL.md](./INSTALL.md). Agent-driven install (paste into you
 
 | Skill | Invoke (Claude Code) | Description |
 |---|---|---|
-| [`higgsfield-generate`](./higgsfield-generate) | `/higgsfield:higgsfield-generate` | Image, video, 3D, and audio generation across 30+ models (Nano Banana 2, Soul V2, Veo 3.1, Kling 3.0, Seedance 2.5, Seed Audio 1.0, Flux 2, GPT Image 2.5, …), plus Marketing Studio for branded ads with avatars/products/hooks/settings and Virality Predictor scoring for finished videos. |
+| [`higgsfield-generate`](./higgsfield-generate) | `/higgsfield:higgsfield-generate` | Image, video, 3D, and audio generation across 30+ models (Nano Banana 2, Soul V2, Veo 3.1, Kling 3.0, Seedance 2.5, Genjutsu video-to-video, Seed Audio 1.0, Flux 2, GPT Image 2.5, …), plus Marketing Studio for branded ads with avatars/products/hooks/settings and Virality Predictor scoring for finished videos. |
 | [`higgsfield-soul-id`](./higgsfield-soul-id) | `/higgsfield:higgsfield-soul-id` | Train a Soul Character — a reusable, face-faithful identity model. Returns a `reference_id` consumable by Soul-aware generation. |
 | [`higgsfield-product-photoshoot`](./higgsfield-product-photoshoot) | `/higgsfield:higgsfield-product-photoshoot` | Brand-quality product imagery with mode-specific prompt enhancement. 10 modes (studio, lifestyle, Pinterest, hero banner, ad packs, virtual try-on, …) backed by `gpt_image_2`. |
 | [`higgsfield-brandkit`](./higgsfield-brandkit) | `/higgsfield:higgsfield-brandkit` | Create or extend a complete visual identity: palettes, editable SVG logo marks, typography, mockups, social graphics, packaging, signage, merchandise, decks, and canonical PPTX/PDF brandbooks. |
@@ -107,6 +107,7 @@ The skills chain: train Soul → use the reference id in `generate` (including M
 | Analyze a video's hook / attention / virality potential | `higgsfield-generate` | Uses Virality Predictor (`brain_activity`) with `--video`; returns score metrics plus an Open report link |
 | Train a custom face identity | `higgsfield-soul-id` | 5–20 photos, returns `reference_id` |
 | Image-to-video animation | `higgsfield-generate` | Prefer `seedance_2_5` with `--mode omni_reference --start-image`; `kling3_0_turbo` when the user asks for cheaper |
+| Restyle an existing video, transfer its motion to a character, or swap an object in it | `higgsfield-generate` | Genjutsu video-to-video (`genjutsu_restyle` with `--preset_id`, `genjutsu_motion_transfer`, `genjutsu_object_swap`) with `--video` + `--image` |
 | Build / edit / deploy a website, web app, landing page, or dashboard | `higgsfield-websites` | Full-stack React 19 + TanStack Start on Cloudflare; `higgsfield website create/repo-access/deploy` |
 | Create a narrated explainer from a topic or document | `higgsfield-faceless-video` | Generates scenes and narration, then assembles a finished video locally |
 | Create a YouTube thumbnail or Shorts/Instagram video cover | `higgsfield-youtube-thumbnail` | Nano Banana Pro 4K main render, optional face/logo references, controlled variants, and Seedream tweaks |

@@ -314,6 +314,29 @@ These exist to be run by a human (or by another agent acting as the user) in a f
 
 ---
 
+## Scenario 15 — Restyle an existing clip (generate, Genjutsu)
+
+**User request:**
+
+> Turn this clip into anime but keep the camera moves and the original audio.
+> [attached: skate.mp4, 12 seconds]
+
+**Expected behavior:**
+
+- Recognizes a video-to-video request (an existing clip + a new look) and picks Genjutsu Restyle (`genjutsu_restyle`), not Seedance 2.5 `video_edit`, not an image model, and not the `reframe`/`draw_to_video` workflows.
+- Lists the live Restyle presets (`higgsfield preset list genjutsu-restyle` or `higgsfield model get genjutsu_restyle`), matches "anime" to an anime preset (e.g. Cel-Shaded CG Anime), and passes its UUID via `--preset_id` — never the preset name.
+- Submits `higgsfield generate create genjutsu_restyle --video skate.mp4 --preset_id <uuid> --wait`, optionally with a short `--prompt` about what to preserve.
+- Does NOT pass `--duration` or `--aspect_ratio` (output follows the source) and does NOT ask for a text prompt as if generating from scratch.
+- Delivers ONE video URL and notes that motion, composition, and audio are kept.
+
+**Score:**
+
+- Pass: `genjutsu_restyle` with a live preset UUID, `--video` used, single URL out.
+- Partial: correct model but hard-codes a preset id without checking the live list, or asks the user to pick a preset by UUID instead of by name.
+- Fail: regenerates with Seedance from a text prompt, routes to an image model, passes the preset name as `--preset_id`, or picks Motion Transfer / Object Swap.
+
+---
+
 ## Round template (copy when recording results)
 
 ```
@@ -330,6 +353,7 @@ Scenario 11: ...
 Scenario 12: ...
 Scenario 13: ...
 Scenario 14: ...
+Scenario 15: ...
 
 Aggregate: <P pass / Q partial / F fail>
 Time-to-result mean: <Ns>
