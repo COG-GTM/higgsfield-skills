@@ -154,8 +154,8 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 
 ### Video — auto-pick
 
-1. **All advertising / commercial video (UGC, unboxing, TV spot, product showcase, branded ad)** → Marketing Studio. See `marketing-modes.md`.
-2. **The user hands over an existing video and wants it transformed, not regenerated** → Genjutsu (video-to-video). Pick the variant by intent: change the look / "make this anime" / "turn this into claymation" → Genjutsu Restyle (`genjutsu_restyle`, needs a `--preset_id`); make *my* character do the moves in this clip → Genjutsu Motion Transfer (`genjutsu_motion_transfer`); replace the person/product in this clip with the one in these photos → Genjutsu Object Swap (`genjutsu_object_swap`). All three take the clip via `--video`.
+1. **The user hands over an existing video and wants it transformed, not regenerated** → Genjutsu (video-to-video). Pick the variant by intent: change the look / "make this anime" / "turn this into claymation" → Genjutsu Restyle (`genjutsu_restyle`, needs a `--preset_id`); make *my* character do the moves in this clip → Genjutsu Motion Transfer (`genjutsu_motion_transfer`); replace the person/product in this clip with the one in these photos (e.g. swap the product in an existing ad, keeping its footage) → Genjutsu Object Swap (`genjutsu_object_swap`). All three take the clip via `--video`.
+2. **All advertising / commercial video (UGC, unboxing, TV spot, product showcase, branded ad)** generated from scratch → Marketing Studio (an ad reference there is inspiration, not footage to keep). See `marketing-modes.md`.
 3. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
 4. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
 
