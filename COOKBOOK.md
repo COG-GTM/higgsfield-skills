@@ -256,6 +256,63 @@ Publishing is separate (`higgsfield website publish`) and happens only when the 
 
 ---
 
+## Recipe 6 — Restyle a Real Clip into Animation (Genjutsu)
+
+**What it does:** One phone clip in → the same shot, same motion, same audio, redrawn in an animated style (anime, claymation, stop motion, low-poly, …). Optionally drop your own character into the clip's movement or swap the product in it.
+
+**Why this is powerful:** You keep the performance you already filmed. Instead of prompting a model to re-imagine a scene, Genjutsu treats your footage as the motion track and changes only what you ask for.
+
+**What you say:**
+
+```
+Turn skate.mp4 into anime but keep the camera moves and the original audio.
+Then make a second version where the skater is the character in hero.png.
+```
+
+**What the agent does:**
+
+1. **Pick a style preset** (Restyle requires a preset UUID; presets are live data):
+
+   ```bash
+   higgsfield preset list genjutsu-restyle --json
+   ```
+
+   Matches "anime" to a preset such as Cel-Shaded CG Anime and keeps its `id`.
+
+2. **Restyle** (`higgsfield-generate`, Genjutsu Restyle):
+
+   ```bash
+   higgsfield generate create genjutsu_restyle \
+     --video ./skate.mp4 \
+     --preset_id <preset_uuid> \
+     --prompt "preserve the original movement and camera composition" \
+     --resolution 720p \
+     --output-dir ./restyle \
+     --wait
+   ```
+
+3. **Put your character into the clip** (Genjutsu Motion Transfer):
+
+   ```bash
+   higgsfield generate create genjutsu_motion_transfer \
+     --video ./skate.mp4 \
+     --image ./hero.png \
+     --output-dir ./restyle \
+     --wait
+   ```
+
+   To replace an object instead of the whole performer (e.g. the skateboard with your product), use `genjutsu_object_swap` with the same flags.
+
+**Tips:**
+
+- Source clips must be at least 4 seconds; anything past 30 seconds is cut to the first 30 seconds (audio included). Trim locally first if you want a different segment.
+- There is no `--duration` or `--aspect_ratio` — output length and framing follow the source. `--resolution` (`480p`/`720p`/`1080p`) only picks the price tier; Genjutsu is billed per output second, so trim before you submit.
+- Restyle accepts up to 5 optional character `--image` references to steer how the people in the clip are redrawn; Motion Transfer and Object Swap need 1–8. With several characters, say who is who in `--prompt` — there is no explicit reference-to-person mapping.
+- Object Swap rejects low-resolution sources (under 409,600 pixels per frame, roughly below 640×640 / 854×480).
+- Generating a new clip from a text prompt is still Seedance 2.5 (Recipe 1). Genjutsu is only for footage you already have.
+
+---
+
 ## Quick reference — which recipe for what
 
 | Goal | Recipe | Skills used |
@@ -265,6 +322,7 @@ Publishing is separate (`higgsfield website publish`) and happens only when the 
 | Async team updates without recording | #3 Founder Video | `higgsfield-soul-id` → `higgsfield-generate` |
 | Turn a topic or document into a narrated explainer | #4 Narrated Explainer | `higgsfield-faceless-video` |
 | Build and deploy a playable browser game | #5 Browser Game | `higgsfield-websites` (`--type game`) |
+| Restyle existing footage, or put your character/product into it | #6 Genjutsu Restyle | `higgsfield-generate` (Genjutsu) |
 
 ## Patterns these recipes share
 

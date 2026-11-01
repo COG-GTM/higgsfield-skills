@@ -39,6 +39,9 @@ Each model declares a closed set of accepted roles or `*_references` params. Pas
 | `gpt_image_2_5` | `image_references` | Use repeated `--image-references` or the short alias `--image`. |
 | `seedance_2_5` | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references` | Use `--mode omni_reference` for reference generation. `t2v` accepts no media. |
 | `seedance_2_0` | `image`, `start_image`, `end_image`, `video`, `audio` | Audio is via `medias` (role `audio`), NOT via `--generate-audio`. |
+| `genjutsu_restyle` | `video`, `image` | Video-to-video restyle. Exactly one source `--video` (4–30s, ≤200 MiB, trimmed to the first 30s incl. audio) plus required `--preset_id`. `--image` is optional: 0–5 character references (≤64 MiB each, JPEG/PNG), restyled separately from the background; omit it to restyle the subjects already in the clip. Describe multi-character roles in `--prompt`; there is no explicit reference-to-person mapping. |
+| `genjutsu_motion_transfer` | `video`, `image` | Video-to-video motion transfer. Exactly one source `--video` (≥4s, trimmed to 30s) supplies the motion; 1–8 `--image` references (required) supply the character. Output duration follows the prepared source. |
+| `genjutsu_object_swap` | `video`, `image` | Video-to-video object/character swap. Exactly one source `--video` (≥4s, trimmed to 30s, at least 409,600 pixels per frame — e.g. 640×640 or 854×480; smaller clips are rejected) and 1–8 `--image` references (required) of the replacement subject. |
 | `brain_activity` | `video` | Virality Predictor analyzes one uploaded clip and returns a text score report plus an Open report link; no prompt required. Treat "analyze this video" / "score this ad" as this video-analysis flow even though the output is text. Raw `.glb` and `.bin` artifacts stay in JSON/debug output, not normal chat output. |
 | `grok_video_v15` | `start_image` | Required single start frame. CLI also accepts `--image` and maps it to `start_image`. |
 | `kling3_0` | `start_image`, `end_image` | Image-to-video with optional last-frame transition. |
@@ -78,6 +81,34 @@ higgsfield generate create multi_image_to_3d \
   --should_texture true \
   --wait
 ```
+
+## Source video (Genjutsu)
+
+The three Genjutsu models (`genjutsu_restyle`, `genjutsu_motion_transfer`, `genjutsu_object_swap`) take an existing clip as the primary input and return a new video. Pass the clip with `--video` (local path, upload id, or a previous video job id) and character/subject references with repeated `--image`:
+
+```bash
+# Restyle: keep motion, composition and audio; change the look via a preset id
+higgsfield generate create genjutsu_restyle \
+  --video ./clip.mp4 \
+  --preset_id <preset_uuid> \
+  --prompt "keep the referenced character's red jacket consistent across shots" \
+  --resolution 720p \
+  --wait
+
+# Motion transfer: the clip's movement, your character
+higgsfield generate create genjutsu_motion_transfer \
+  --video ./dance.mp4 \
+  --image ./character-front.png --image ./character-side.png \
+  --wait
+
+# Object swap: replace the subject in the clip with the one in the photos
+higgsfield generate create genjutsu_object_swap \
+  --video ./ad.mp4 \
+  --image ./new-product.png \
+  --wait
+```
+
+Limits shared by all three: source clip at least 4 seconds; clips longer than 30 seconds use only their first 30 seconds (trim locally first if another segment is wanted); download size up to 200 MiB. Image references: 0–5 for Restyle (optional), 1–8 for Motion Transfer and Object Swap (required). Object Swap additionally rejects sources under 409,600 pixels per frame. No `--duration` or `--aspect_ratio` — output framing and length follow the source. `--resolution` (`480p`/`720p`/`1080p`, default `720p`) sets the price tier only; Genjutsu is billed per output second.
 
 ## Audio reference (Seedance)
 

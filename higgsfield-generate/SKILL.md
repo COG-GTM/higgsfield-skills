@@ -9,11 +9,12 @@ description: |
   Use when: "generate an image", "make a video", "animate
   this photo", "image-to-video", "edit/stylize/remix this
   image", "reframe this video", "edit this video from a
-  sketch", "create a 3D model/GLB", "create a sound effect",
-  "make music", "text-to-audio", "create an ad", "make a UGC
+  sketch", "restyle this video", "swap a character in a
+  video", "create a 3D model/GLB", "sound effect/music/
+  text-to-audio", "create an ad", "make a UGC
   video", "unboxing", "presenter video", "import product from
-  URL", or "analyze video virality". Supports generic generation,
-  workflows, Marketing Studio, and Virality Predictor.
+  URL", or "analyze video virality". Covers generic generation,
+  workflows, Marketing Studio, Virality Predictor.
   Chain with higgsfield-soul-id for face/identity consistency.
   NOT for: Soul training, brand systems/brandbooks (use
   higgsfield-brandkit), photoshoots, cards, YouTube thumbnails
@@ -93,7 +94,8 @@ If the user says "analyze this video", "score this ad", "evaluate the hook", or 
 
    **Video:**
    - Complete narrated explainer from a topic, story, or document → use `higgsfield-video-explainer`, not generic video generation.
-   - All advertising / commercial / branded ad video → Marketing Studio (see Marketing Studio below)
+   - **User supplies an existing clip and wants it transformed → Genjutsu** (video-to-video, Higgsfield). Restyle the look ("make this anime", "claymation version of this") → Genjutsu Restyle (`genjutsu_restyle`: `--video` + `--preset_id` from the live preset list, optional up to 5 character `--image`). Put *this* character into the clip's movement → Genjutsu Motion Transfer (`genjutsu_motion_transfer`: `--video` + 1–8 `--image`). Replace a person/object in the clip with the one in the photos — including swapping the product in an existing ad while keeping its footage → Genjutsu Object Swap (`genjutsu_object_swap`: `--video` + 1–8 `--image`). Source clip 4–30s (longer is trimmed to 30s); output length follows it. Not for generating a new clip from scratch — that stays Seedance 2.5.
+   - All advertising / commercial / branded ad video from scratch (no source clip to keep) → Marketing Studio (see Marketing Studio below)
    - Edit existing video from sketch/timestamp, or reframe to another aspect ratio → workflow (`draw_to_video` or `reframe`), not a model. See `references/workflows.md`.
    - **Default for everything else → Seedance 2.5** (`seedance_2_5`): multi-shot, consistent identity, motion-heavy, image-to-video, editing, extension, 4–30s. Modes `t2v` / `omni_reference` / `video_edit` / `video_extension`; use `omni_reference` for reference inputs, including start/end frames; `t2v` accepts no media. Up to 1080p. Do not downgrade because another model's schema looks simpler.
    - User asks for 4K → Seedance 2.0 (`seedance_2_0`); say why you switched.
@@ -127,10 +129,10 @@ For workflow jobs, use `higgsfield generate workflow <workflow_name> ... --wait`
 
 | Flag | Purpose | Models that accept it |
 |---|---|---|
-| `--image <path-or-id>` | reference image | most image models, `grok_video_v15`, `multi_image_to_3d`, `seedance_2_0`, `seedance_2_5`, `veo3_1`, `marketing_studio_video` |
+| `--image <path-or-id>` | reference image | most image models, `grok_video_v15`, `multi_image_to_3d`, `seedance_2_0`, `seedance_2_5`, `veo3_1`, `marketing_studio_video`, `genjutsu_restyle` (0–5), `genjutsu_motion_transfer` / `genjutsu_object_swap` (1–8, required) |
 | `--start-image <path-or-id>` | first frame for image-to-video transitions | `grok_video_v15`, `kling3_0`, `kling3_0_turbo`, `kling2_6`, `veo3_1`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
 | `--end-image <path-or-id>` | last frame for transitions | `kling3_0`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
-| `--video <path-or-id>` | reference or analyzed video | `seedance_2_0`, `seedance_2_5`, `brain_activity` |
+| `--video <path-or-id>` | reference, analyzed, or source video | `seedance_2_0`, `seedance_2_5`, `brain_activity`, `genjutsu_restyle`, `genjutsu_motion_transfer`, `genjutsu_object_swap` (source clip, required, 4–30s) |
 | `--audio <path-or-id>` | reference audio (lipsync, soundtrack match) | `seedance_2_0`, `seedance_2_5` (reference input; distinct from generating output audio) |
 
 For reference-array models, the explicit flags are `--image-references`, `--video-references`, and `--audio-references`; `--image`, `--video`, and `--audio` are short aliases when the schema exposes those params.
@@ -146,6 +148,8 @@ higgsfield generate create gpt_image_2_5 --prompt "neon city at dusk" --aspect_r
 higgsfield generate create nano_banana_flash --prompt "anime character concept, expressive pose" --image ./ref.png --wait
 higgsfield generate create seedance_2_5 --prompt "camera dollies in" --mode omni_reference --start-image ./first.png --duration 12 --resolution 1080p --wait
 higgsfield generate create grok_video_v15 --prompt "cinematic handheld shot, neon rainy street" --start-image ./image.png --duration 5 --resolution 720p --wait
+higgsfield generate create genjutsu_restyle --video ./clip.mp4 --preset_id <preset_uuid> --prompt "keep the camera moves, anime look" --resolution 720p --wait
+higgsfield generate create genjutsu_motion_transfer --video ./dance.mp4 --image ./character.png --wait
 higgsfield generate create text2image_soul_v2 --prompt "..." --soul-id <soul_ref_id> --quality 2k --wait
 higgsfield generate create multi_image_to_3d --image ./front.png --image ./side.png --should_texture true --wait
 higgsfield generate create seed_audio --prompt "cinematic rain ambience with distant thunder" --wait
@@ -161,6 +165,8 @@ Stdin prompt: `echo "..." | higgsfield generate create z_image --wait`.
 Soul image quality: for `text2image_soul_v2` and `soul_cinematic`, pass `--quality 1.5k` or `--quality 2k`. These are UI-facing tiers; the backend maps them to `720p`/`1080p` and model-specific dimensions from the selected `--aspect_ratio`. `soul_location` has no quality selector; it uses fixed dimensions per aspect ratio.
 
 Soul style presets: `text2image_soul_v2` accepts `--style_id <uuid>`; list curated styles with `higgsfield preset list soul-v2` and pass the chosen id. `--style_id` combines with `--soul-id` but not with an image reference. `soul_cinema_studio` also accepts `--style_id`.
+
+Genjutsu Restyle presets: `genjutsu_restyle` requires `--preset_id <uuid>`. Presets are live data — list them with `higgsfield preset list genjutsu-restyle` (or inspect `higgsfield model get genjutsu_restyle`), match the user's wording to a preset name (e.g. "anime" → Cel-Shaded CG Anime), and pass its id. Never pass the preset name. See the preset table in `references/model-catalog.md`.
 
 ## Marketing Studio
 
@@ -298,6 +304,7 @@ Open report: <report_url>
 
 - `Missing required params: prompt` → user gave no prompt; ask for it.
 - `Missing required params: medias` on `brain_activity` / Virality Predictor → pass exactly one video via `--video <path-or-id>`.
+- `Missing required params: preset_id` on `genjutsu_restyle` → list presets (`higgsfield preset list genjutsu-restyle`) and pass the UUID, not the style name. `Missing required params: medias` on `genjutsu_motion_transfer` / `genjutsu_object_swap` → both a `--video` source clip and at least one `--image` are required.
 - `Invalid values: aspect_ratio=99:99 (allowed: ...)` → bad enum; pick from allowed.
 - `Unknown params: foo` → schema doesn't accept that flag; check `higgsfield model get <jst>`. If this happens for `hook_id` or `setting_id`, the selected model/job_set_type does not support Marketing Studio setup items.
 - `Session expired` → `higgsfield auth login`.

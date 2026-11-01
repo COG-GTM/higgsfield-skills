@@ -65,6 +65,36 @@ Preferred defaults for examples and quick-start guidance in this repo:
 | Grok Imagine (video) | xAI | Text and image-to-video with audio support. Worth trying for stylized creative briefs. |
 | Cinema Studio Video | Higgsfield | Cinematic compositions with dramatic mood. Use Cinema Studio 4.0 as the modern default. |
 | Cinema Studio Video v2 | Higgsfield | Refined cinematic camera and color with genre control. Use Cinema Studio 4.0 as the modern default. |
+| Genjutsu Restyle (`genjutsu_restyle`) | Higgsfield | **Restyle an existing video.** Video-to-video: changes the visual style of a source clip while keeping its motion, shot composition, and original audio. Requires one `--video` (4–30s, ≤200 MiB; longer clips are trimmed to the first 30s) and a style `--preset_id` (UUID from the live Restyle preset catalog; see below). Optional `--prompt`, up to 5 character `--image` references, resolution `480p`/`720p`/`1080p` (default `720p`). Output length follows the source. |
+| Genjutsu Motion Transfer (`genjutsu_motion_transfer`) | Higgsfield | **Apply a video's motion to a character from reference images.** Video-to-video: the source clip supplies the movement and camera; 1–8 `--image` references supply the character. Requires one `--video` (≥4s, trimmed to 30s) and at least one `--image`. Optional `--prompt`; resolution `480p`/`720p`/`1080p` (default `720p`). |
+| Genjutsu Object Swap (`genjutsu_object_swap`) | Higgsfield | **Swap a character or object inside an existing video.** Video-to-video: replaces the subject in the source clip with the one shown in 1–8 `--image` references while keeping the scene and motion. Requires one `--video` (≥4s, trimmed to 30s, at least 409,600 pixels per frame, e.g. 640×640 or 854×480) and at least one `--image`. Optional `--prompt`; resolution `480p`/`720p`/`1080p` (default `720p`). |
+
+### Genjutsu Restyle presets
+
+Restyle needs a style preset UUID in `--preset_id`; the style name, preview URL, or list index is not accepted, and a prompt or character image does not replace it. Presets are live server-managed data: list them with `higgsfield preset list genjutsu-restyle` (fall back to `higgsfield model get genjutsu_restyle` if that slug is not exposed) and pass the chosen id. The snapshot below (fetched 2026-11-01) is for intent matching only — confirm the id against the live list before submitting.
+
+| Preset | `preset_id` | Reach for it when the user says |
+|---|---|---|
+| Cel-Shaded CG Anime | `c2143317-f28d-4c3c-a0b8-39bd547e08a7` | "anime", "make it a cartoon" (default anime pick) |
+| Hand-Painted Cel Animation | `067b27d4-8d8f-44d1-a24b-0f4c28012e4b` | "hand-drawn", "Ghibli-like", "painted anime" |
+| Expressive 2D Animation | `368c6a65-4a48-4e3a-80c7-c460455b5e17` | "2D animation", "Saturday-morning cartoon" |
+| Graphic Cel | `523cf5be-67fc-46d6-bfdb-56ccc3e2a8f6` | "flat graphic", "bold outlines" |
+| Outline-free Cel | `55aee79b-bb36-40e3-b957-205e6867a3d9` | "cel shading without outlines" |
+| Nighttime Anime Pixel Art | `e54beac7-ca48-4034-856b-0a6f2b05081a` | "pixel art", "retro game look at night" |
+| Retro Game 3D | `255f5244-b43d-43fc-9c28-7138f8c12984` | "PS1 / N64 look", "retro 3D game" |
+| Chunky Textured Low-Poly | `f1d0c30d-a2ec-4c33-a892-d8d158e2d093` | "low-poly" |
+| Comic 3D | `3dc6d454-808d-4e27-8a4e-4751da818324` | "comic book 3D", "Spider-Verse-like" |
+| Neon Graphic Cinematic 3D | `41d02f6d-1d5d-4efa-9942-9fe71de9429b` | "neon", "cyberpunk 3D" |
+| Painterly Cinematic 3D | `85bc9e2c-f896-41d7-b280-53f2f5e321ac` | "painterly 3D film look" |
+| Warm Painterly 3D Animation | `e82b7bbb-c8bf-4d70-a866-e7b15e744a2b` | "Pixar-like", "warm 3D animation" |
+| Painterly Sculpted Animation | `083abd05-afbd-4cda-857f-7f2d2082e9b2` | "sculpted", "clay-like painted" |
+| Rounded Toy CGI | `6bce8e75-df92-487f-a4f0-a324a6a297f3` | "toy", "vinyl figure" |
+| Grotesque Street CGI | `c3268f8d-4cc0-423c-975d-ca1bf7df385a` | "grotesque", "exaggerated street CGI" |
+| Felt Puppet Stop Motion | `bf6aee41-83a8-433c-b5a5-2309c7bd5b26` | "stop motion", "felt puppets" |
+| Knitted Yarn World | `2b5b68c4-9253-4d79-9d05-81e7718d8d7a` | "knitted", "yarn", "wool" |
+| Expressive Gouache Fashion | `89484749-e1b9-40c9-979e-fc578c3aad6d` | "gouache", "fashion illustration" |
+| Textured Gouache Character Illustration | `f2b4e920-3b1e-4931-8a86-b06566005145` | "textured illustration", "storybook" |
+| Sculptural 3D Fashion | `f7786536-123b-47b8-ab65-ee0647df1509` | "sculptural fashion", "editorial 3D" |
 
 Also available but not profiled here — use them when the user names them, and check params with `higgsfield model get <id>` first:
 
@@ -124,9 +154,10 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 
 ### Video — auto-pick
 
-1. **All advertising / commercial video (UGC, unboxing, TV spot, product showcase, branded ad)** → Marketing Studio. See `marketing-modes.md`.
-2. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
-3. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
+1. **The user hands over an existing video and wants it transformed, not regenerated** → Genjutsu (video-to-video). Pick the variant by intent: change the look / "make this anime" / "turn this into claymation" → Genjutsu Restyle (`genjutsu_restyle`, needs a `--preset_id`); make *my* character do the moves in this clip → Genjutsu Motion Transfer (`genjutsu_motion_transfer`); replace the person/product in this clip with the one in these photos (e.g. swap the product in an existing ad, keeping its footage) → Genjutsu Object Swap (`genjutsu_object_swap`). All three take the clip via `--video`.
+2. **All advertising / commercial video (UGC, unboxing, TV spot, product showcase, branded ad)** generated from scratch → Marketing Studio (an ad reference there is inspiration, not footage to keep). See `marketing-modes.md`.
+3. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
+4. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
 
 ### Video — only when asked
 
@@ -160,6 +191,7 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 - **Prompt-only models reject reference media.** Z Image, Recraft V4.1, Soul Cast, Soul Location, and some Wan configs are prompt-only; pass no media flags to them. Virality Predictor is different: it returns text but requires a video input.
 - **Route branded product visuals through `higgsfield-product-photoshoot`** — its prompt enhancer adds 10 mode-specific templates on top of GPT Image 2. Direct GPT Image 2.5 generation here is the right call for everything that isn't a product photoshoot.
 - **Cinema Studio ids** (`cinematic_studio_video_4_0`, `cinematic_studio_3_0`) do not appear in `higgsfield model list`; check them with `higgsfield model get <id>`. Prefer 4.0 when the user asks for Cinema Studio without a version.
+- **Genjutsu is video-in, video-out.** Do not route "restyle this video" to an image model or to Seedance `video_edit`, and do not use Genjutsu when there is no source clip (generate with Seedance 2.5 instead). Restyle will not run without a `--preset_id`; Motion Transfer and Object Swap will not run without at least one `--image`. Confirm the ids with `higgsfield model list --json` (the API endpoint ids are `higgsfield/genjutsu/{restyle,motion-transfer,object-swap}/v1.0`).
 - **When the user names a specific model, use it.** The auto-picks cover the common intents — the rest of the catalog exists for users who know what they want.
 
 ---
@@ -176,6 +208,9 @@ Each model accepts a fixed set of media roles or `*_references` params. When uns
 | Seedance 2.5 | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references`; use `omni_reference` for reference generation |
 | Kling 3.0 | `start_image`, `end_image` |
 | Cinema Studio 4.0 | `start_image`, `end_image` (`omni_reference` only), `image_references`, `video_references`, `audio_references`; up to 30 images |
+| Genjutsu Restyle | `video` (required, exactly 1), `image` (0–5 character references) |
+| Genjutsu Motion Transfer | `video` (required, exactly 1), `image` (1–8 character references, required) |
+| Genjutsu Object Swap | `video` (required, exactly 1), `image` (1–8 replacement references, required) |
 | Kling 3.0 Turbo | `start_image` (max 1; CLI also accepts `--image`) |
 | Kling 2.6 | `start_image` |
 | Grok Video 1.5 | `start_image` (max 1) or `image_references`, not both; `audio_references` need an image reference |
@@ -212,6 +247,7 @@ Common patterns:
 - **Veo 3.1**: `16:9` or `9:16`. Duration `4`, `6`, or `8` only. Quality `basic`/`high`/`ultra`.
 - **Marketing Studio (video)**: `auto`/`21:9`/`16:9`/`4:3`/`1:1`/`3:4`/`9:16`. Resolution `480p`, `720p`, or `1080p`.
 - **Cinema Studio 4.0**: `auto`/`21:9`/`16:9`/`4:3`/`1:1`/`3:4`/`9:16`. Resolution `480p`, `720p`, or `1080p`. Native audio on by default.
+- **Genjutsu (Restyle, Motion Transfer, Object Swap)**: no aspect ratio or duration flags — framing and length follow the source video (4–30s; longer clips use only the first 30s). Resolution `480p`, `720p`, or `1080p` (default `720p`); it selects the price tier only. Pricing is per output second.
 
 ## When you submit an unknown value
 
