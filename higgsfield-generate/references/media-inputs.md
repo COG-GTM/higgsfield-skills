@@ -90,16 +90,17 @@ Genjutsu models transform the user's clip rather than generate from scratch, so 
 - Restyle: file ≤200 MiB, 0–5 character images (≤64 MiB each), and a live `--preset_id` (read it from `higgsfield model get genjutsu_restyle --json`; never invent one).
 - Object Swap: ≥409,600 px per frame (1280×720 ok, 854×480 is not).
 - Object Swap / Motion Transfer: 1–8 reference images.
+- Jobs can take 7–25 min, longer than the 10 min default wait, so pass `--wait-timeout 30m`. If the wait expires, rejoin with `higgsfield generate wait <job_id>`.
 
 ```bash
 higgsfield generate create genjutsu_restyle \
   --video ./clip.mp4 --preset_id <preset_uuid> \
   --prompt "Preserve the original movement and camera composition." \
-  --resolution 720p --wait
+  --resolution 720p --wait --wait-timeout 30m
 
 higgsfield generate create genjutsu_object_swap \
   --video ./clip.mp4 --image ./new_product.png \
-  --prompt "Replace the mug on the desk with the bottle from the image" --wait
+  --prompt "Replace the mug on the desk with the bottle from the image" --wait --wait-timeout 30m
 ```
 
 ## Audio reference (Seedance)

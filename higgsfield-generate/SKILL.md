@@ -94,9 +94,9 @@ If the user says "analyze this video", "score this ad", "evaluate the hook", or 
 
    **Video:**
    - Complete narrated explainer from a topic, story, or document → use `higgsfield-video-explainer`, not generic video generation.
-   - All advertising / commercial / branded ad video → Marketing Studio (see Marketing Studio below)
+   - Restyle an existing video into a preset style (anime, cel, low-poly, stop motion…) → Genjutsu Restyle (`genjutsu_restyle`; take the live `preset_id` from `higgsfield model get genjutsu_restyle`, never invent one); swap an object in a video with a reference image → `genjutsu_object_swap`; transfer a video's motion onto a reference character → `genjutsu_motion_transfer`. Wins over Marketing Studio even for ad clips. Each takes one `--video` (≥4 s, >30 s trimmed) and can run 7–25 min, so use `--wait-timeout 30m`; limits in `references/media-inputs.md`.
+   - New advertising / commercial / branded ad video → Marketing Studio (see Marketing Studio below)
    - Edit existing video from sketch/timestamp, or reframe to another aspect ratio → workflow (`draw_to_video` or `reframe`), not a model. See `references/workflows.md`.
-   - Restyle an existing video into a preset style (anime, cel, low-poly, stop motion…) → Genjutsu Restyle (`genjutsu_restyle`; take the live `preset_id` from `higgsfield model get genjutsu_restyle`, never invent one); swap an object in a video with a reference image → `genjutsu_object_swap`; transfer a video's motion onto a reference character → `genjutsu_motion_transfer`. Each takes one `--video` (≥4 s, >30 s trimmed); limits in `references/media-inputs.md`.
    - **Default for everything else → Seedance 2.5** (`seedance_2_5`): multi-shot, consistent identity, motion-heavy, image-to-video, editing, extension, 4–30s. Modes `t2v` / `omni_reference` / `video_edit` / `video_extension`; use `omni_reference` for reference inputs, including start/end frames; `t2v` accepts no media. Up to 1080p. Do not downgrade because another model's schema looks simpler.
    - User asks for 4K → Seedance 2.0 (`seedance_2_0`); say why you switched.
    - User asks for cheaper or faster → Kling 3.0 Turbo (`kling3_0_turbo`), Veo 3.1 Lite, or Seedance 1.5 Pro.

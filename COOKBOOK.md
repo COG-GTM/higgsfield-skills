@@ -281,7 +281,7 @@ Restyle factory_handshake.mp4 as anime. Keep the movement and camera the same. S
      --preset_id <chosen_preset_uuid> \
      --prompt "Preserve the original movement and camera composition." \
      --resolution 720p \
-     --wait
+     --wait --wait-timeout 30m
    ```
 
 4. Delivers the restyled video URL. The source audio is kept.
@@ -292,18 +292,18 @@ The other two Genjutsu variants use the same shape with reference images instead
 # Swap an object for the one in the reference image (source must be ≥409,600 px per frame, e.g. 1280×720)
 higgsfield generate create genjutsu_object_swap \
   --video ./factory_handshake.mp4 --image ./new_logo_sign.png \
-  --prompt "Replace the wall sign with the sign from the image" --wait
+  --prompt "Replace the wall sign with the sign from the image" --wait --wait-timeout 30m
 
 # Transfer the clip's motion onto a reference character (1–8 images)
 higgsfield generate create genjutsu_motion_transfer \
-  --video ./factory_handshake.mp4 --image ./robot_character.png --wait
+  --video ./factory_handshake.mp4 --image ./robot_character.png --wait --wait-timeout 30m
 ```
 
 **Tips:**
 
 - Source must be ≥4 s; anything past 30 s is trimmed. Trim locally first if the important part is later in the clip.
 - Billing is per source second. Restyle is roughly $0.32/s at `480p`, $0.68/s at `720p`, $1.63/s at `1080p` — use `480p` for drafts.
-- Jobs can take 7–25 min when the queue is busy; pass `--wait-timeout 30m`.
+- Jobs can take 7–25 min when the queue is busy, longer than the CLI's 10 min default wait, so every example passes `--wait-timeout 30m`. If the wait still expires, the job keeps running: rejoin it with `higgsfield generate wait <job_id>`.
 - The CLI ids `genjutsu_restyle` / `genjutsu_object_swap` / `genjutsu_motion_transfer` are unconfirmed; check `higgsfield model list` first.
 
 ---
