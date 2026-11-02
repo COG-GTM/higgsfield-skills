@@ -128,10 +128,9 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 ### Video — auto-pick
 
 1. **All advertising / commercial video (UGC, unboxing, TV spot, product showcase, branded ad)** → Marketing Studio. See `marketing-modes.md`.
-2. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
-3. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
-
-4. **Restyle an existing video into a preset look, swap an object in it from a reference image, or transfer its motion onto a reference character** → Genjutsu (`genjutsu_restyle` / `genjutsu_object_swap` / `genjutsu_motion_transfer`). This is video-to-video on the user's clip, not new generation; Seedance 2.5 `video_edit` stays the default for free-form prompt edits. For Restyle, list presets first and let the user pick one.
+2. **Restyle an existing video into a preset look, swap an object in it from a reference image, or transfer its motion onto a reference character** → Genjutsu (`genjutsu_restyle` / `genjutsu_object_swap` / `genjutsu_motion_transfer`). This is video-to-video on the user's clip, not new generation; Seedance 2.5 `video_edit` stays the default for free-form prompt edits. For Restyle, list presets first and let the user pick one.
+3. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
+4. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
 
 ### Video — only when asked
 

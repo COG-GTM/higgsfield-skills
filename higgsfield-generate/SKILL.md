@@ -12,8 +12,9 @@ description: |
   sketch", "create a 3D model/GLB", "create a sound effect",
   "make music", "text-to-audio", "create an ad", "make a UGC
   video", "unboxing", "presenter video", "import product from
-  URL", or "analyze video virality". Supports generic generation,
-  workflows, Marketing Studio, and Virality Predictor.
+  URL", "restyle this video (e.g. anime)", "swap an object in
+  this video", "transfer this motion to my character", or
+  "analyze video virality".
   Chain with higgsfield-soul-id for face/identity consistency.
   NOT for: Soul training, brand systems/brandbooks (use
   higgsfield-brandkit), photoshoots, cards, YouTube thumbnails
