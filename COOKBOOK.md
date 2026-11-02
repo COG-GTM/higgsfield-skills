@@ -256,6 +256,58 @@ Publishing is separate (`higgsfield website publish`) and happens only when the 
 
 ---
 
+## Recipe 6 — Restyle, Object-Swap, or Re-Animate an Existing Clip (Genjutsu)
+
+**What you say:**
+
+```text
+Restyle factory_handshake.mp4 as anime. Keep the movement and camera the same. Show me the style options first.
+```
+
+**What the agent does:**
+
+1. Uses `higgsfield-generate` and routes to Genjutsu because the user's clip is the input.
+2. Fetches the live Restyle presets (never hard-code them — the list changes):
+
+   ```bash
+   higgsfield preset list genjutsu-restyle --json
+   ```
+
+3. Shows names + preview links, waits for a pick (e.g. "Cel-Shaded CG Anime"), then submits:
+
+   ```bash
+   higgsfield generate create genjutsu_restyle \
+     --video ./factory_handshake.mp4 \
+     --preset_id <chosen_preset_uuid> \
+     --prompt "Preserve the original movement and camera composition." \
+     --resolution 720p \
+     --wait
+   ```
+
+4. Delivers the restyled video URL. The source audio is kept.
+
+The other two Genjutsu variants use the same shape with reference images instead of a preset:
+
+```bash
+# Swap an object for the one in the reference image (source must be ≥409,600 px per frame, e.g. 1280×720)
+higgsfield generate create genjutsu_object_swap \
+  --video ./factory_handshake.mp4 --image ./new_logo_sign.png \
+  --prompt "Replace the wall sign with the sign from the image" --wait
+
+# Transfer the clip's motion onto a reference character (1–8 images)
+higgsfield generate create genjutsu_motion_transfer \
+  --video ./factory_handshake.mp4 --image ./robot_character.png --wait
+```
+
+**Tips:**
+
+- Source must be ≥4 s; anything past 30 s is trimmed. Trim locally first if the important part is later in the clip.
+- Billing is per source second (rounded up). Restyle is roughly $0.32/s at `480p`, $0.68/s at `720p`, $1.63/s at `1080p` — use `480p` for drafts.
+- Jobs take several minutes; add `--wait-timeout 20m` for 20–30 s clips.
+- App/SDK builders: the same presets are served by `GET https://api.higgsfield.ai/models/higgsfield/genjutsu/restyle/v1.0/presets` (`items[].id/name/preview_url`); the model endpoints are `higgsfield/genjutsu/{restyle,object-swap,motion-transfer}/v1.0`.
+
+---
+
 ## Quick reference — which recipe for what
 
 | Goal | Recipe | Skills used |
@@ -265,6 +317,7 @@ Publishing is separate (`higgsfield website publish`) and happens only when the 
 | Async team updates without recording | #3 Founder Video | `higgsfield-soul-id` → `higgsfield-generate` |
 | Turn a topic or document into a narrated explainer | #4 Narrated Explainer | `higgsfield-faceless-video` |
 | Build and deploy a playable browser game | #5 Browser Game | `higgsfield-websites` (`--type game`) |
+| Restyle, object-swap, or re-animate an existing clip | #6 Genjutsu | `higgsfield-generate` (Genjutsu) |
 
 ## Patterns these recipes share
 

@@ -12,8 +12,9 @@ description: |
   sketch", "create a 3D model/GLB", "create a sound effect",
   "make music", "text-to-audio", "create an ad", "make a UGC
   video", "unboxing", "presenter video", "import product from
-  URL", or "analyze video virality". Supports generic generation,
-  workflows, Marketing Studio, and Virality Predictor.
+  URL", "restyle this video (e.g. anime)", "swap an object in
+  this video", "transfer this motion to my character", or
+  "analyze video virality".
   Chain with higgsfield-soul-id for face/identity consistency.
   NOT for: Soul training, brand systems/brandbooks (use
   higgsfield-brandkit), photoshoots, cards, YouTube thumbnails
@@ -95,6 +96,7 @@ If the user says "analyze this video", "score this ad", "evaluate the hook", or 
    - Complete narrated explainer from a topic, story, or document → use `higgsfield-video-explainer`, not generic video generation.
    - All advertising / commercial / branded ad video → Marketing Studio (see Marketing Studio below)
    - Edit existing video from sketch/timestamp, or reframe to another aspect ratio → workflow (`draw_to_video` or `reframe`), not a model. See `references/workflows.md`.
+   - Restyle an existing video into a preset style (anime, cel, low-poly, stop motion…) → Genjutsu Restyle (`genjutsu_restyle`; list presets with `higgsfield preset list genjutsu-restyle` and pass `--preset_id`); swap an object in a video with a reference image → `genjutsu_object_swap`; transfer a video's motion onto a reference character → `genjutsu_motion_transfer`. Each takes one `--video` (≥4 s, >30 s trimmed); limits in `references/media-inputs.md`.
    - **Default for everything else → Seedance 2.5** (`seedance_2_5`): multi-shot, consistent identity, motion-heavy, image-to-video, editing, extension, 4–30s. Modes `t2v` / `omni_reference` / `video_edit` / `video_extension`; use `omni_reference` for reference inputs, including start/end frames; `t2v` accepts no media. Up to 1080p. Do not downgrade because another model's schema looks simpler.
    - User asks for 4K → Seedance 2.0 (`seedance_2_0`); say why you switched.
    - User asks for cheaper or faster → Kling 3.0 Turbo (`kling3_0_turbo`), Veo 3.1 Lite, or Seedance 1.5 Pro.
@@ -130,7 +132,7 @@ For workflow jobs, use `higgsfield generate workflow <workflow_name> ... --wait`
 | `--image <path-or-id>` | reference image | most image models, `grok_video_v15`, `multi_image_to_3d`, `seedance_2_0`, `seedance_2_5`, `veo3_1`, `marketing_studio_video` |
 | `--start-image <path-or-id>` | first frame for image-to-video transitions | `grok_video_v15`, `kling3_0`, `kling3_0_turbo`, `kling2_6`, `veo3_1`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
 | `--end-image <path-or-id>` | last frame for transitions | `kling3_0`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
-| `--video <path-or-id>` | reference or analyzed video | `seedance_2_0`, `seedance_2_5`, `brain_activity` |
+| `--video <path-or-id>` | reference, analyzed, or source video | `seedance_2_0`, `seedance_2_5`, `brain_activity`, `genjutsu_restyle`, `genjutsu_object_swap`, `genjutsu_motion_transfer` |
 | `--audio <path-or-id>` | reference audio (lipsync, soundtrack match) | `seedance_2_0`, `seedance_2_5` (reference input; distinct from generating output audio) |
 
 For reference-array models, the explicit flags are `--image-references`, `--video-references`, and `--audio-references`; `--image`, `--video`, and `--audio` are short aliases when the schema exposes those params.
