@@ -107,6 +107,7 @@ The skills chain: train Soul → use the reference id in `generate` (including M
 | Analyze a video's hook / attention / virality potential | `higgsfield-generate` | Uses Virality Predictor (`brain_activity`) with `--video`; returns score metrics plus an Open report link |
 | Train a custom face identity | `higgsfield-soul-id` | 5–20 photos, returns `reference_id` |
 | Image-to-video animation | `higgsfield-generate` | Prefer `seedance_2_5` with `--mode omni_reference --start-image`; `kling3_0_turbo` when the user asks for cheaper |
+| Restyle a clip (anime, cel, low-poly…), swap an object in it, or move a character with its motion | `higgsfield-generate` | Genjutsu video-to-video (`genjutsu_restyle` with a live preset, `genjutsu_object_swap`, `genjutsu_motion_transfer`); CLI ids unconfirmed |
 | Build / edit / deploy a website, web app, landing page, or dashboard | `higgsfield-websites` | Full-stack React 19 + TanStack Start on Cloudflare; `higgsfield website create/repo-access/deploy` |
 | Create a narrated explainer from a topic or document | `higgsfield-faceless-video` | Generates scenes and narration, then assembles a finished video locally |
 | Create a YouTube thumbnail or Shorts/Instagram video cover | `higgsfield-youtube-thumbnail` | Nano Banana Pro 4K main render, optional face/logo references, controlled variants, and Seedream tweaks |
