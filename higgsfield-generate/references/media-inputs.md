@@ -41,6 +41,9 @@ Each model declares a closed set of accepted roles or `*_references` params. Pas
 | `seedance_2_0` | `image`, `start_image`, `end_image`, `video`, `audio` | Audio is via `medias` (role `audio`), NOT via `--generate-audio`. |
 | `brain_activity` | `video` | Virality Predictor analyzes one uploaded clip and returns a text score report plus an Open report link; no prompt required. Treat "analyze this video" / "score this ad" as this video-analysis flow even though the output is text. Raw `.glb` and `.bin` artifacts stay in JSON/debug output, not normal chat output. |
 | `grok_video_v15` | `start_image` | Required single start frame. CLI also accepts `--image` and maps it to `start_image`. |
+| `genjutsu_restyle` | `video`, `image` | Video-to-video restyle. Exactly one `--video` (≥4 s, ≤200 MiB; >30 s is trimmed to 30 s; source audio is kept) plus required `--preset_id`. Optional 0–5 character `--image` refs (≤64 MiB each). Accepts only `video`, `preset_id`, `image`, `prompt`, `resolution` — any other param is rejected. |
+| `genjutsu_object_swap` | `video`, `image` | Exactly one `--video` (≥4 s; >30 s trimmed to 30 s) and 1–8 `--image` refs showing the replacement object. Source frames must be ≥409,600 px (w×h): 1280×720 passes, 854×480 fails — upscale or pick another model first. |
+| `genjutsu_motion_transfer` | `video`, `image` | Exactly one `--video` motion source (≥4 s; >30 s trimmed to 30 s) and 1–8 `--image` refs of the character to animate. |
 | `kling3_0` | `start_image`, `end_image` | Image-to-video with optional last-frame transition. |
 | `kling3_0_turbo` | `start_image` | Fast text-to-video or single start-frame animation. Max 1 reference; CLI also accepts `--image` and maps it to `start_image`. |
 | `kling2_6` | `start_image` | Single frame anchor. |
@@ -77,6 +80,27 @@ higgsfield generate create multi_image_to_3d \
   --image ./front.png --image ./side.png --image ./back.png \
   --should_texture true \
   --wait
+```
+
+## Source video (Genjutsu)
+
+Genjutsu models transform the user's clip rather than generate from scratch, so check the source before submitting:
+
+- Duration ≥4 s. Clips longer than 30 s are trimmed to the first 30 s; output duration follows the (trimmed) source and is billed per source second.
+- Restyle: file ≤200 MiB, 0–5 character images (≤64 MiB each), and a live `--preset_id` (read it from `higgsfield model get genjutsu_restyle --json`; never invent one).
+- Object Swap: ≥409,600 px per frame (1280×720 ok, 854×480 is not).
+- Object Swap / Motion Transfer: 1–8 reference images.
+- Jobs can take 7–25 min, longer than the 10 min default wait, so pass `--wait-timeout 30m`. If the wait expires, rejoin with `higgsfield generate wait <job_id>`.
+
+```bash
+higgsfield generate create genjutsu_restyle \
+  --video ./clip.mp4 --preset_id <preset_uuid> \
+  --prompt "Preserve the original movement and camera composition." \
+  --resolution 720p --wait --wait-timeout 30m
+
+higgsfield generate create genjutsu_object_swap \
+  --video ./clip.mp4 --image ./new_product.png \
+  --prompt "Replace the mug on the desk with the bottle from the image" --wait --wait-timeout 30m
 ```
 
 ## Audio reference (Seedance)
