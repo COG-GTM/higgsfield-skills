@@ -314,6 +314,29 @@ These exist to be run by a human (or by another agent acting as the user) in a f
 
 ---
 
+## Scenario 15 — Restyle a video into a preset look (generate, Genjutsu)
+
+**User request:**
+
+> Turn this clip into an anime version. Keep the motion and camera exactly as they are.
+> [attached: factory_handshake.mp4, 10 s, 1280×720]
+
+**Expected behavior:**
+
+- Picks Genjutsu Restyle (`genjutsu_restyle`), not Seedance 2.5 or a text-to-video model — the user's clip is the input.
+- Runs `higgsfield preset list genjutsu-restyle --json`, shows the anime-style options (e.g. Cel-Shaded CG Anime) with preview links, and waits for a pick (or picks the obvious match when only one fits).
+- Submits one job with `--video factory_handshake.mp4 --preset_id <chosen_uuid>` plus a motion-preserving `--prompt`; no aspect-ratio or duration flags.
+- Leaves `--resolution` at the default unless the user asks for cheaper/faster (`480p`) or higher quality (`1080p`).
+- Delivers ONE video URL.
+
+**Score:**
+
+- Pass: Genjutsu Restyle with a live, user-confirmed preset, single job, single URL.
+- Partial: correct model but a hard-coded preset id, or extra params the schema rejects.
+- Fail: generates a new video from text, fabricates a preset id, or uses Object Swap / Motion Transfer.
+
+---
+
 ## Round template (copy when recording results)
 
 ```
@@ -330,6 +353,7 @@ Scenario 11: ...
 Scenario 12: ...
 Scenario 13: ...
 Scenario 14: ...
+Scenario 15: ...
 
 Aggregate: <P pass / Q partial / F fail>
 Time-to-result mean: <Ns>

@@ -65,6 +65,9 @@ Preferred defaults for examples and quick-start guidance in this repo:
 | Grok Imagine (video) | xAI | Text and image-to-video with audio support. Worth trying for stylized creative briefs. |
 | Cinema Studio Video | Higgsfield | Cinematic compositions with dramatic mood. Use Cinema Studio 4.0 as the modern default. |
 | Cinema Studio Video v2 | Higgsfield | Refined cinematic camera and color with genre control. Use Cinema Studio 4.0 as the modern default. |
+| Genjutsu Restyle (`genjutsu_restyle`; API `higgsfield/genjutsu/restyle/v1.0`) | Higgsfield | **Video-to-video restyle into a curated preset look** (anime, cel, low-poly, stop motion, painterly 3D…). Requires `--video` and `--preset_id` (UUID from the live presets list); optional 0–5 character `--image` refs, `--prompt`, `--resolution` `480p`/`720p` (default)/`1080p`. Keeps source motion, framing and audio; output length follows the source. |
+| Genjutsu Object Swap (`genjutsu_object_swap`; API `higgsfield/genjutsu/object-swap/v1.0`) | Higgsfield | **Replace an object in an existing video with the one in a reference image.** Requires `--video` and 1–8 `--image` refs; optional `--prompt` naming what to swap, `--resolution` `480p`/`720p` (default)/`1080p`. Source must be ≥409,600 px per frame (1280×720 ok, 854×480 not). |
+| Genjutsu Motion Transfer (`genjutsu_motion_transfer`; API `higgsfield/genjutsu/motion-transfer/v1.0`) | Higgsfield | **Transfer the motion of a source video onto a reference character.** Requires `--video` (motion source) and 1–8 `--image` refs (the character); optional `--prompt`, `--resolution` `480p`/`720p` (default)/`1080p`. Output length follows the source. |
 
 Also available but not profiled here — use them when the user names them, and check params with `higgsfield model get <id>` first:
 
@@ -128,6 +131,8 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 2. **Everything else** → Seedance 2.5 — multi-shot, consistent identity, motion-heavy, image-to-video (`--mode omni_reference --start-image`), editing, extension, 4–30s. Do not downgrade because another model's schema looks simpler.
 3. **The user asks for 4K** → Seedance 2.0 (Seedance 2.5 tops out at 1080p). Say why you switched.
 
+4. **Restyle an existing video into a preset look, swap an object in it from a reference image, or transfer its motion onto a reference character** → Genjutsu (`genjutsu_restyle` / `genjutsu_object_swap` / `genjutsu_motion_transfer`). This is video-to-video on the user's clip, not new generation; Seedance 2.5 `video_edit` stays the default for free-form prompt edits. For Restyle, list presets first and let the user pick one.
+
 ### Video — only when asked
 
 - **Cheaper or faster:** Kling 3.0 Turbo, Veo 3.1 Lite, or Seedance 1.5 Pro.
@@ -179,6 +184,8 @@ Each model accepts a fixed set of media roles or `*_references` params. When uns
 | Kling 3.0 Turbo | `start_image` (max 1; CLI also accepts `--image`) |
 | Kling 2.6 | `start_image` |
 | Grok Video 1.5 | `start_image` (max 1) or `image_references`, not both; `audio_references` need an image reference |
+| Genjutsu Restyle | `video` (1, required) + `image` (0–5 character refs); also requires `preset_id` |
+| Genjutsu Object Swap / Motion Transfer | `video` (1, required) + `image` (1–8, required) |
 | Veo 3.1 | `start_image` (max 1) |
 | Veo 3 | `image` (max 1) |
 | Marketing Studio (video) | `image`, `start_image`, `end_image` |
@@ -212,6 +219,7 @@ Common patterns:
 - **Veo 3.1**: `16:9` or `9:16`. Duration `4`, `6`, or `8` only. Quality `basic`/`high`/`ultra`.
 - **Marketing Studio (video)**: `auto`/`21:9`/`16:9`/`4:3`/`1:1`/`3:4`/`9:16`. Resolution `480p`, `720p`, or `1080p`.
 - **Cinema Studio 4.0**: `auto`/`21:9`/`16:9`/`4:3`/`1:1`/`3:4`/`9:16`. Resolution `480p`, `720p`, or `1080p`. Native audio on by default.
+- **Genjutsu (all three)**: no aspect ratio or duration params — output follows the source clip (≥4 s; anything past 30 s is trimmed). Resolution `480p`, `720p` (default), or `1080p`.
 
 ## When you submit an unknown value
 
