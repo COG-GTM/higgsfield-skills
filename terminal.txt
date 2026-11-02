@@ -1,0 +1,40 @@
+$ bash validate-skills (all run: steps of .github/workflows/validate-skills.yml)
+== Validate frontmatter and name
+✓ higgsfield-brandkit/SKILL.md — frontmatter valid (name=higgsfield-brandkit, version=0.14.0)
+✓ higgsfield-faceless-video/SKILL.md — frontmatter valid (name=higgsfield-faceless-video, version=0.14.0)
+✓ higgsfield-generate/SKILL.md — frontmatter valid (name=higgsfield-generate, version=0.14.0)
+✓ higgsfield-marketplace-cards/SKILL.md — frontmatter valid (name=higgsfield-marketplace-cards, version=0.14.0)
+✓ higgsfield-product-photoshoot/SKILL.md — frontmatter valid (name=higgsfield-product-photoshoot, version=0.14.0)
+✓ higgsfield-soul-id/SKILL.md — frontmatter valid (name=higgsfield-soul-id, version=0.14.0)
+✓ higgsfield-video-explainer/SKILL.md — frontmatter valid (name=higgsfield-video-explainer, version=0.14.0)
+✓ higgsfield-websites/SKILL.md — frontmatter valid (name=higgsfield-websites, version=0.14.0)
+✓ higgsfield-youtube-thumbnail/SKILL.md — frontmatter valid (name=higgsfield-youtube-thumbnail, version=0.14.0)
+-> exit 0
+== Validate version sync across all manifests
+Root VERSION: 0.14.0
+✓ all version locations match 0.14.0
+-> exit 0
+== Validate marketplace.json lists every skill folder
+✓ marketplace.json includes every skill folder
+-> exit 0
+== Validate references resolve and no orphans
+✓ all references resolve, no orphans
+-> exit 0
+== Validate no parent-dir references in SKILL.md or references/
+✓ no parent-dir references; skills are self-contained
+-> exit 0
+== Verify video helpers
+captions: authored alignment and block count passed
+channel script validation, narration lock and missing-asset gate passed
+song duration, lyric and language checks passed
+timeline alignment, frame binding and failure gates passed
+-> exit 0
+
+$ grep -n -i genjutsu higgsfield-generate/references/model-catalog.md | cut -c1-200
+68:| Genjutsu Restyle (`genjutsu_restyle`; API `higgsfield/genjutsu/restyle/v1.0`) | Higgsfield | **Video-to-video restyle into a curated preset look** (anime, cel, low-poly, stop motion, painterly 3D
+69:| Genjutsu Object Swap (`genjutsu_object_swap`; API `higgsfield/genjutsu/object-swap/v1.0`) | Higgsfield | **Replace an object in an existing video with the one in a reference image.** Requires `--
+70:| Genjutsu Motion Transfer (`genjutsu_motion_transfer`; API `higgsfield/genjutsu/motion-transfer/v1.0`) | Higgsfield | **Transfer the motion of a source video onto a reference character.** Requires
+131:2. **Restyle an existing video into a preset look, swap an object in it from a reference image, or transfer its motion onto a reference character** → Genjutsu (`genjutsu_restyle` / `genjutsu_obj
+186:| Genjutsu Restyle | `video` (1, required) + `image` (0–5 character refs); also requires `preset_id` |
+187:| Genjutsu Object Swap / Motion Transfer | `video` (1, required) + `image` (1–8, required) |
+221:- **Genjutsu (all three)**: no aspect ratio or duration params — output follows the source clip (≥4 s; anything past 30 s is trimmed). Resolution `480p`, `720p` (default), or `1080p`.
